@@ -178,8 +178,24 @@ def feline_fixes(typed, source, limit):
     5
     """
     # BEGIN PROBLEM 6
-    assert False, 'Remove this line'
-    # END PROBLEM 6
+    if limit < 0:
+        return 1
+    ans = 0
+    if len(typed) < len(source):
+        ans = len(source) - len(typed)
+        ans += feline_fixes(typed, source[:len(typed)], limit - ans)
+        return ans
+    if len(source) < len(typed):
+        ans = len(typed) - len(source)
+        ans += feline_fixes(typed[:len(source)], source, limit - ans)
+        return ans
+    if (len(typed) == 0):
+        return 0
+    if typed[0] == source[0]:
+        return feline_fixes(typed[1:], source[1:], limit)
+    else:
+        return 1 + feline_fixes(typed[1:], source[1:], limit - 1)
+    # END PROBLEM 6    
 
 
 ############
@@ -202,23 +218,20 @@ def minimum_mewtations(typed, source, limit):
     >>> minimum_mewtations("ckiteus", "kittens", big_limit) # ckiteus -> kiteus -> kitteus -> kittens
     3
     """
-    assert False, 'Remove this line'
-    if ___________: # Base cases should go here, you may add more base cases as needed.
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
-    # Recursive cases should go below here
-    if ___________: # Feel free to remove or add additional cases
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
+    if limit < 0:
+        return 1
+    if typed == source:
+        return 0
+    if min(len(typed), len(source)) == 0:
+        return max(len(typed), len(source)) if max(len(typed), len(source)) <= limit else limit + 1
+
+    add = minimum_mewtations(typed, source[1:], limit - 1) + 1
+    remove = minimum_mewtations(typed[1:], source, limit - 1) + 1
+    subsititute = minimum_mewtations(typed[1:], source[1:], limit - 1) + 1
+    if typed[0] == source[0]:
+        return min(add, remove, minimum_mewtations(typed[1:], source[1:], limit))
     else:
-        add = ... # Fill in these lines
-        remove = ...
-        substitute = ...
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
+        return min(add, remove, subsititute)
 
 
 def final_diff(typed, source, limit):
@@ -260,6 +273,14 @@ def report_progress(typed, source, user_id, upload):
     # BEGIN PROBLEM 8
     "*** YOUR CODE HERE ***"
     # END PROBLEM 8
+    cnt = 0
+    for i in range(len(typed)):
+        if typed[i] == source[i]:
+            cnt += 1
+        else:
+            break
+    upload({'id': user_id, 'progress':cnt / len(source)})
+    return cnt / len(source)
 
 
 def time_per_word(words, timestamps_per_player):
@@ -282,6 +303,13 @@ def time_per_word(words, timestamps_per_player):
     # BEGIN PROBLEM 9
     "*** YOUR CODE HERE ***"
     # END PROBLEM 9
+    times = []
+    for timestamps in timestamps_per_player:
+        mid_time = []
+        for i in range(len(timestamps) - 1):
+            mid_time.append(timestamps[i+1] - timestamps[i])
+        times.append(mid_time)
+    return match(words, times)
 
 
 def fastest_words(match):
@@ -304,6 +332,19 @@ def fastest_words(match):
     # BEGIN PROBLEM 10
     "*** YOUR CODE HERE ***"
     # END PROBLEM 10
+    fastest = []
+    for i in player_indices:
+        fastest.append([])
+    for word_i in word_indices:
+        word = get_word(match, word_i)
+        min_time = time(match, 0, word_i)
+        index = 0
+        for player_i in player_indices:
+            if time(match, player_i, word_i) < min_time:
+                min_time = time(match, player_i, word_i)
+                index = player_i
+        fastest[index].append(word)
+    return fastest
 
 
 def match(words, times):
