@@ -182,6 +182,8 @@ class ThrowerAnt(Ant):
     damage = 1
     # ADD/OVERRIDE CLASS ATTRIBUTES HERE
     food_cost = 3
+    upper_bound = 100000
+    lower_bound = 0
 
     def nearest_bee(self):
         """Return the nearest Bee in a Place that is not the HIVE, connected to
@@ -191,10 +193,16 @@ class ThrowerAnt(Ant):
         """
         # BEGIN Problem 3 and 4
         mid = self.place
-        while mid != None and not mid.is_hive:
-            if mid.bees != []:
-                return random.choice(mid.bees)
-            mid = mid.entrance
+        for i in range(self.lower_bound):
+            if mid != None and not mid.is_hive:
+                mid = mid.entrance
+        for i in range(self.upper_bound - self.lower_bound + 1):
+            if mid != None and not mid.is_hive:
+                if mid.bees != []:
+                    return random_bee(mid.bees)
+                mid = mid.entrance
+            else:
+                break
         return None
         # END Problem 3 and 4
 
@@ -226,8 +234,10 @@ class ShortThrower(ThrowerAnt):
     name = 'Short'
     food_cost = 2
     # OVERRIDE CLASS ATTRIBUTES HERE
+    lower_bound = 0
+    upper_bound = 3
     # BEGIN Problem 4
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
     # END Problem 4
 
 
@@ -237,8 +247,9 @@ class LongThrower(ThrowerAnt):
     name = 'Long'
     food_cost = 2
     # OVERRIDE CLASS ATTRIBUTES HERE
+    lower_bound = 5
     # BEGIN Problem 4
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
     # END Problem 4
 
 
@@ -250,7 +261,7 @@ class FireAnt(Ant):
     food_cost = 5
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 5
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
     # END Problem 5
 
     def __init__(self, health=3):
@@ -266,6 +277,26 @@ class FireAnt(Ant):
         """
         # BEGIN Problem 5
         "*** YOUR CODE HERE ***"
+        if self.health > amount:
+            dead_bee = []
+            for bee in self.place.bees:
+                if bee.health > amount:
+                    bee.reduce_health(amount)
+                else:
+                    dead_bee.append(bee)
+            for b in dead_bee:
+                b.reduce_health(amount)
+            super().reduce_health(amount)
+        else:
+            dead_bee = []
+            for bee in self.place.bees:
+                if bee.health > amount + self.damage:
+                    bee.reduce_health(amount + self.damage)
+                else:
+                    dead_bee.append(bee)
+            for b in dead_bee:
+                b.reduce_health(amount + self.damage)
+            super().reduce_health(amount)
         # END Problem 5
 
 # BEGIN Problem 6
