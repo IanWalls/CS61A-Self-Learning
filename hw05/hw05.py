@@ -90,9 +90,11 @@ def yield_paths(t, value):
     [[0, 2], [0, 2, 1, 2]]
     """
     "*** YOUR CODE HERE ***"
-    
-    for _______________ in _________________:
-        for _______________ in _________________:
+    if label(t) == value:
+        yield [label(t)]
+    for br in branches(t):
+        for path in yield_paths(br, value):
+            yield [label(t)] + list(path)
             "*** YOUR CODE HERE ***"
 
 
@@ -128,6 +130,16 @@ def remainders_generator(m):
     11
     """
     "*** YOUR CODE HERE ***"
+    ans = []
+    def naturals_m(m, i):
+        mid = naturals()
+        while True:
+            num = next(mid)
+            if num % m == i:
+                yield num 
+    for i in range(m):
+        mid = naturals()
+        yield naturals_m(m, i)
 
 
 
