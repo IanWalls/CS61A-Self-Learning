@@ -27,7 +27,19 @@ def merge(a, b):
     [2, 3, 5, 7, 8, 9, 11, 13, 14, 15]
     """
     "*** YOUR CODE HERE ***"
-    
+    mid_a = next(a)
+    mid_b = next(b)
+    while True:
+        if mid_a < mid_b:
+            yield mid_a
+            mid_a = next(a)
+        elif mid_b < mid_a:
+            yield mid_b
+            mid_b = next(b)
+        else:
+            yield mid_a
+            mid_a = next(a)
+            mid_b = next(b)
 
 
 def perms(seq):
@@ -53,6 +65,17 @@ def perms(seq):
     [['a', 'b'], ['b', 'a']]
     """
     "*** YOUR CODE HERE ***"
+    if len(seq) == 1:
+        yield seq
+    else:
+        seq = list(seq)
+        ans = []
+        mid = list(perms(seq[:-1]))
+        for i in range(len(mid)):
+            for j in range(len(mid[i])+1):
+                ans.append(mid[i][0:j] + [seq[-1]] + mid[i][j:])
+        for i in range(len(ans)):
+            yield ans[i]
 
 
 def yield_paths(t, value):
